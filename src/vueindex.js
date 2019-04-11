@@ -4,14 +4,6 @@ var fs = require('fs');
 import App from './views/app';
 init()
 async function init() {
-    let initialDir = './test/'
-    let dirs = await getDirs(initialDir).then(result => result)
-    for (let index = 0; index < dirs.length; index++) {
-        const element = dirs[index];
-        element.internal = await getDirs(initialDir + element.name).then(result => result)
-        console.log('aa')
-    }
-    console.log(dirs)
     let tree = ({
         open: ['public'],
         files: {
@@ -76,7 +68,6 @@ async function init() {
             }
         ]
     })
-    debugger
     await Vue.use(Vuetify, {
         iconfont: 'md',
         theme: {
@@ -89,6 +80,16 @@ async function init() {
             success: "#81C784"
         }
     })
+
+
+    let initialDir = './test/'
+    let dirs = await getDirs(initialDir).then(result => result)
+    for (let index = 0; index < dirs.length; index++) {
+        const element = dirs[index];
+        element.internal = tree //await getDirs(initialDir + element.name).then(result => result)
+        console.log('aa')
+    }
+    console.log(dirs)
 
 
     let vueElement = new Vue({
