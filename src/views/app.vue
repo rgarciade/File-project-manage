@@ -19,17 +19,9 @@
           >
             <v-layout>
               <v-flex>
-                <v-chip
-                      v-for="(selection, i) in selections"
-                      :key="i"
-                      color="grey"
-                      dark
-                      small
-                    >
-                  <v-icon left small>mdi-beer</v-icon>
-                  {{tab.internal[0] ? tab.internal[0]['name'] : ''}}
-    
-                </v-chip>
+               
+                  safa
+                  {{tab.internal[0] ? tab.internal[0]['name'] : 'ccc'}}
               </v-flex>
             </v-layout>
       </v-tab-item>
