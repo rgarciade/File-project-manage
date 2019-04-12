@@ -2,8 +2,8 @@ import Vue from 'vue';
 import Vuetify from 'vuetify';
 var fs = require('fs');
 import App from './views/app';
-init()
-async function init() {
+
+(async function init() {
     let tree = ({
         open: ['public'],
         files: {
@@ -18,53 +18,32 @@ async function init() {
         },
         tree: [],
         items: [{
+                id: 1,
                 name: '.git'
             },
             {
+                id: 2,
                 name: 'node_modules'
             },
             {
+                id: 3,
                 name: 'public',
-                children: [{
-                        name: 'static',
-                        children: [{
-                            name: 'logo.png',
-                            file: 'png'
-                        }]
-                    },
-                    {
-                        name: 'favicon.ico',
-                        file: 'png'
-                    },
-                    {
-                        name: 'index.html',
-                        file: 'html'
-                    }
-                ]
             },
             {
-                name: '.gitignore',
-                file: 'txt'
+                id: 4,
+                name: '.gitignore'
             },
             {
-                name: 'babel.config.js',
-                file: 'js'
+                id: 5,
+                name: 'babel.config.js'
             },
             {
-                name: 'package.json',
-                file: 'json'
+                id: 6,
+                name: 'package.json'
             },
             {
-                name: 'README.md',
-                file: 'md'
-            },
-            {
-                name: 'vue.config.js',
-                file: 'js'
-            },
-            {
-                name: 'yarn.lock',
-                file: 'txt'
+                id: 7,
+                name: 'README.md'
             }
         ]
     })
@@ -104,7 +83,7 @@ async function init() {
                 dirs = await getDirs().then(result => result)
             }, 3000);
          */
-}
+})()
 
 
 

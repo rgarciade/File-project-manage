@@ -1,7 +1,7 @@
-import { app, BrowserWindow } from 'electron';
+import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
-
+shell.showItemInFolder('/home/raul/Documentos/salida.pdf ')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -47,6 +47,8 @@ app.on('ready', () => {
     // Results of action will be automatically passed to all renderer processes
 
     createWindow()
+
+
 });
 
 // Quit when all windows are closed.
@@ -65,6 +67,11 @@ app.on('activate', () => {
         createWindow();
     }
 });
+
+
+ipcMain.on('opendir', (event, args) => {
+    shell.showItemInFolder('/home/raul/Documentos/salida.pdf ')
+})
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and import them here.
