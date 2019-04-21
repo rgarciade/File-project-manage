@@ -192,7 +192,7 @@
 </template>
 
 <script>
-  import { getFiles, moveFileToNewDir } from "../commonFunctions.js";
+  import { getFiles, moveFileToNewDir, opendir } from "../commonFunctions.js";
   export default {
       name: 'app',
       data(){
@@ -248,6 +248,12 @@
             tempComf[index] = this.DirsConfig[index]; 
           }
           return tempComf
+        },
+        openSaveDir(){
+          let saveDir = JSON.parse(localStorage.getItem('saveDir')).url ? JSON.parse(localStorage.getItem('saveDir')).url : null
+          if(saveDir){
+            opendir(saveDir)
+          }
         },
         async prepareDisrsAndItemsDirs(change = false) {
           let dirs = await this.getDirs()

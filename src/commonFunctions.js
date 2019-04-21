@@ -1,4 +1,5 @@
 var fs = require('fs');
+import { shell } from 'electron';
 const getFiles = (url) => {
     console.log(url)
     return new Promise(function(resolve, reject) {
@@ -34,4 +35,7 @@ const moveFileToNewDir = (oldPath, newPath) => {
 
 
 }
-module.exports = { getFiles, moveFileToNewDir }
+const opendir = (url) => {
+    shell.openItem(url)
+}
+module.exports = { getFiles, moveFileToNewDir, opendir }
