@@ -1,5 +1,32 @@
 <template>
   <v-app>
+      <v-dialog
+        v-model="repeatIDStatus"
+        max-width="290"
+      >
+      <v-card>
+          <v-card-title class="headline">existe un id de orden repetido</v-card-title>
+          <v-card-text>
+             id repetido: {{repeatID}}
+          </v-card-text>
+        </v-card>
+      
+      </v-dialog>
+      <v-snackbar
+        v-model="snackbar"
+        top
+        timeout:2000
+      >
+        {{ snackbarText }}
+        <v-btn
+          color="pink"
+          flat
+          @click="snackbar = false"
+        >
+          Close
+        </v-btn>
+      </v-snackbar>
+
     <v-tabs fixed-tabs
       v-model="tabs"
     >
@@ -45,7 +72,7 @@
           transition="dialog-bottom-transition"
           scrollable
         >
-          <v-card tile>
+          <v-card>
             <v-toolbar card dark color="primary">
               <v-btn icon dark @click="dialog = false">
                 <v-icon>close</v-icon>
@@ -60,13 +87,12 @@
                   </v-btn>
                 </v-toolbar-items>
                 <v-toolbar-items>
-                  <v-btn dark flat >Guardar</v-btn>
+                  <v-btn dark flat @click="sabeDirConfif">Guardar</v-btn>
                 </v-toolbar-items>
             </v-toolbar>
                 <v-list two-line>
-            <template v-for="(item, index) in testDirsSaved">
-              <form :key="index">
-              <v-layout row >
+            <template v-for="(item, index) in testDirsConfig">
+              <v-layout row :key="index">
                 <v-flex xs2 >
                   <v-select 
                     :items="orden"
@@ -90,19 +116,36 @@
                           <v-icon color="grey lighten-1" @click="removeDir(item.url)">delete_forever</v-icon>
                       </v-list-tile-action>
                     </v-list-tile>
-                    <v-divider :key="`divider-${index}`" ></v-divider>
+                    <v-divider v-if="index < (testDirsConfig.length -1)"  :key="`divider-${index}`" ></v-divider>
                   </v-flex>
               </v-layout>
-                  </form>
+            </template>
+            <template>
+              <v-flex>
+                <v-card >
+                  <v-card-title primary-title>
+                    <div>
+                      <h3 class="headline mb-0">Directorio de guardado</h3>
+                      <div> {{saveDir.url}}</div>
+                    </div>
+                  </v-card-title>
+                  <v-card-actions>
+                    <v-btn flat icon @click="addNewSaveDir">
+                      <input id="newSaveDir" type="file" webkitdirectory style="display: none" />
+                      <v-icon>save_alt</v-icon>
+                    </v-btn>
+                  </v-card-actions>
+                </v-card>
+              </v-flex>
             </template>
           </v-list>
           </v-card>
         </v-dialog>
         <div class='element-add'>
-        <v-btn color="primary" class='button-add' fab @click="dialog = true">
-          <v-icon>add_box</v-icon>
-        </v-btn>
-      </div>
+          <v-btn color="primary" class='button-add' fab @click="dialog = true">
+            <v-icon>add_box</v-icon>
+          </v-btn>
+        </div>
   </v-app>
 </template>
 
@@ -115,8 +158,13 @@
             tree:[],
             dialog: false,
             testDirs:[],
-            testDirsSaved:[],
-            orden:[]
+            testDirsConfig:[],
+            orden:[],
+            repeatIDStatus: false,
+            repeatID: 0,
+            snackbar: false,
+            snackbarText: '',
+            saveDir:{name:'',url:''}
           }
       },
       props: ['dirs'],
@@ -127,27 +175,43 @@
             console.log('-->',e.currentTarget.innerHTML)
           });
         } 
+        this.saveDir = this.getSaveDir()
         document.getElementById('newDir').addEventListener('change', e => {
           let dirName = e.target.files[0].name
           let realUri = e.target.files[0].path
           this.addToDirToStorage({'name':dirName,'url':realUri})
+          document.getElementById('newDir').value = ''
         })
+        document.getElementById('newSaveDir').addEventListener('change', e => {
+          let dirName = e.target.files[0].name
+          let realUri = e.target.files[0].path
+          this.changeSaveDir({'name':dirName,'url':realUri})
+          document.getElementById('newSaveDir').value = ''
+        })
+
       },
       created:function () {
-         if(localStorage.getItem('dirs')){
-          this.testDirs = this.getDirs()
-          this.orden = []
-          for (let index = 0; index < this.testDirs.length; index++) {
-            this.orden.push(index)
-          }
-        }
+        
       },
       methods:{
         getDirs(){
           return (localStorage.getItem('dirs'))? JSON.parse(localStorage.getItem('dirs')) : []
         },
+        getSaveDir(){
+          return (localStorage.getItem('saveDir'))? JSON.parse(localStorage.getItem('saveDir')) : {name:'no definido',url:'no definida'}
+        },
+        getConfigDirs(){
+          let tempComf = []
+          for (let index = 0; index < this.testDirsConfig.length; index++) {
+            tempComf[index] = this.testDirsConfig[index]; 
+          }
+          return tempComf
+        },
+        getDisrsAndList(){
+
+        },
         removeDir(url){
-          let thisDirs = this.getDirs()
+          let thisDirs = this.getConfigDirs()
           for(var i = thisDirs.length - 1; i >= 0; i--) {
             if(thisDirs[i].url === url){
                   thisDirs.splice(i, 1);
@@ -156,38 +220,84 @@
           for(var i = thisDirs.length - 1; i >= 0; i--) {
             thisDirs[i].id = i
           }
-          console.log(thisDirs)
-          this.updateDirs(thisDirs)
+          this.testDirsConfig = thisDirs
         },
         updateDirs(thisDirs){
           this.testDirs = thisDirs
+
           this.orden = []
           for (let index = 0; index < this.testDirs.length; index++) {
             this.orden.push(index)
           }
           localStorage.setItem("dirs", JSON.stringify(thisDirs));
+          this.activeSnackbar('Directorios actualizados')
+          this.dialog = false
         },
-        changeOrder(event){
-          console.log(event)
+        activeSnackbar(text){
+          this.snackbar = true
+          this.snackbarText = text
+        },
+        sabeDirConfif(){
+          let newDirs = this.getConfigDirs()
+          let newDirsOrder = []
+          
+          for (let index = 0; index < newDirs.length; index++) {
+            const id = newDirs[index].id
+            let sumid = 0 
+            for (let a = 0; a < newDirs.length; a++) {
+              if(id == newDirs[a].id){
+                sumid ++
+              }
+              if(sumid > 1){
+                a = newDirs.length
+                index = newDirs.length
+                this.repeatIDStatus = true
+                this.repeatID = id
+              }
+            }
+          }
+          for (let index = 0; index < newDirs.length; index++) {
+            newDirsOrder[newDirs[index].id] = newDirs[index]
+          }
+          if(!this.repeatIDStatus){
+            this.updateDirs(newDirsOrder)
+          }
         },
         addNewDir(event){
           document.getElementById('newDir').click()
         },
+        addNewSaveDir(event){
+          document.getElementById('newSaveDir').click()
+        },
+        changeSaveDir(newSaveDir){
+          localStorage.setItem("saveDir", JSON.stringify(newSaveDir));
+          this.saveDir = newSaveDir
+        },
         addToDirToStorage(newDir){
-          let thisDirs = this.getDirs()
+          let thisDirs = this.getConfigDirs()
           thisDirs[thisDirs.length] = { 'id':thisDirs.length, 'name': newDir.name, 'url': newDir.url}
-          this.updateDirs(thisDirs);
+          this.testDirsConfig = thisDirs
+          this.updateOrder()
+        },
+        updateOrder(){
+          if(this.getConfigDirs()){
+            let tempDirs = this.getConfigDirs()
+            
+            this.orden = []
+            for (let index = 0; index < tempDirs.length; index++) {
+              this.orden.push(index)
+            }
+          }
         }
       },
-       watch: {
-          // whenever question changes, this function will run
-          dialog: function (newDialog) {
+      watch: {
+        dialog: function (newDialog) {
             if(newDialog){
-              
-              this.testDirsSaved = this.testDirs
+              this.testDirsConfig = this.getDirs()
+              this.updateOrder()
             }
-      }
-  },
+        }
+    },
   }
 </script>
 <style>
