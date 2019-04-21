@@ -18,6 +18,14 @@
      margin-left: auto;
  }
  
+ .element-savedir {
+     position: fixed;
+     bottom: 0px;
+     left: 130px;
+     margin-right: auto;
+     margin-left: auto;
+ }
+ 
  .pasar-archivo {
      position: fixed;
      top: 47px;

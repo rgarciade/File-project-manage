@@ -40,7 +40,7 @@
     <v-tabs-items class="item-file" v-model="tabs">
           <v-tab-item
             v-for=" tab in dirsToSee"
-            :key="tab.name"
+            :key="tab.id"
             :valu="tab"
           >
         <v-layout>
@@ -180,6 +180,11 @@
             <v-icon>replay</v-icon>
           </v-btn>
         </div>
+        <div class='element-savedir'>
+          <v-btn color="blue" class='button-add' fab @click="openSaveDir()">
+            <v-icon>all_inbox</v-icon>
+          </v-btn>
+        </div>
         <div class='pasar-archivo'>
           <v-btn  color="info" @click="moveFile">Pasar Archivos</v-btn>
         </div>
@@ -204,8 +209,7 @@
             snackbarText: '',
             saveDir:{name:'',url:''},
             dirsToSee:[],
-            filesSelected:[],
-            breweries:[]
+            filesSelected:[]
           }
       },
       props: ['dirs'],
@@ -213,6 +217,7 @@
         let clasFileName = document.getElementsByClassName('v-treeview-node__label')
         for (var i = 0; i < clasFileName.length; i++) {
           clasFileName[i].addEventListener('click',function(e) {
+            console.log('aaa')
           });
         } 
         this.saveDir = this.getSaveDir()
@@ -288,7 +293,8 @@
           localStorage.setItem("dirs", JSON.stringify(thisDirs));
           this.activeSnackbar('Directorios actualizados')
           this.dialog = false
-          this.prepareDisrsAndItemsDirs(1)
+          //this.prepareDisrsAndItemsDirs(1)
+          location.reload();
         },
         activeSnackbar(text){
           this.snackbar = true
@@ -360,6 +366,8 @@
         },
         moveFile(){
           let filesSelecteds = this.getSelection(this.tabs)
+          console.log('this.dirsToSee',this.dirsToSee)
+          console.log('this.tabs',this.tabs)
           if(this.dirsToSee[this.tabs + 1]){
             let destinationDirectory= this.dirsToSee[this.tabs + 1 ].url
             for (let index = 0; index < filesSelecteds.length; index++) {
