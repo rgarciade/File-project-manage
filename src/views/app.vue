@@ -14,8 +14,7 @@
       </v-dialog>
       <v-snackbar
         v-model="snackbar"
-        top
-        timeout:2000
+        buttom
       >
         {{ snackbarText }}
         <v-btn
@@ -23,7 +22,7 @@
           flat
           @click="snackbar = false"
         >
-          Close
+          Cerrar
         </v-btn>
       </v-snackbar>
 
@@ -31,16 +30,16 @@
       v-model="tabs"
     >
       <v-tab
-        v-for=" tab in dirs"
+        v-for=" tab in dirsToSee"
         :key="tab.name"
         :valu="tab"
       >
-        Item {{ tab.name }}
+        {{ tab.name }}
       </v-tab>
     </v-tabs>
-    <v-tabs-items v-model="tabs">
+    <v-tabs-items class="item-file" v-model="tabs">
           <v-tab-item
-            v-for=" tab in dirs"
+            v-for=" tab in dirsToSee"
             :key="tab.name"
             :valu="tab"
           >
@@ -49,7 +48,7 @@
           <v-card-text>
             <v-treeview
               v-model="tree"
-              :items="tab.internal.items"
+              :items="tab.files"
               activatable
               active-class="grey lighten-4 indigo--text"
               selected-color="indigo"
@@ -59,7 +58,6 @@
             >
             </v-treeview>
           </v-card-text>
-          <v-btn color="info">Info</v-btn>
         </v-flex>
         </v-layout>
         
@@ -91,7 +89,7 @@
                 </v-toolbar-items>
             </v-toolbar>
                 <v-list two-line>
-            <template v-for="(item, index) in testDirsConfig">
+            <template v-for="(item, index) in DirsConfig">
               <v-layout row :key="index">
                 <v-flex xs2 >
                   <v-select 
@@ -104,19 +102,19 @@
                   </v-select>
                 </v-flex>
                 <v-flex xs10>
-                    <v-list-tile :key="index" avatar ripple @click="">
+                    <v-list-tile :key="index" avatar ripple>
                       <v-list-tile-content>
                         <v-list-tile-title>
                           Orden: {{ item.id }}
                           </v-list-tile-title>
-                        <v-list-tile-sub-title class="text--primary">{{ item.name  }}</v-list-tile-sub-title>
-                        <v-list-tile-sub-title>{{ item.url }}</v-list-tile-sub-title>
+                        <v-list-tile-sub-title class="text--primary">Nombre de la carpeta: {{ item.name  }}</v-list-tile-sub-title>
+                        <v-list-tile-sub-title>Dirección a la carpeta: {{ item.url }}</v-list-tile-sub-title>
                       </v-list-tile-content>
                       <v-list-tile-action>
                           <v-icon color="grey lighten-1" @click="removeDir(item.url)">delete_forever</v-icon>
                       </v-list-tile-action>
                     </v-list-tile>
-                    <v-divider v-if="index < (testDirsConfig.length -1)"  :key="`divider-${index}`" ></v-divider>
+                    <v-divider v-if="index < (DirsConfig.length -1)"  :key="`divider-${index}`" ></v-divider>
                   </v-flex>
               </v-layout>
             </template>
@@ -146,10 +144,14 @@
             <v-icon>add_box</v-icon>
           </v-btn>
         </div>
+        <div class='pasar-archivo'>
+          <v-btn  color="info">Pasar Archivos</v-btn>
+        </div>
   </v-app>
 </template>
 
 <script>
+  import { getFiles } from "../commonFunctions.js";
   export default {
       name: 'app',
       data(){
@@ -157,14 +159,15 @@
             tabs:0,
             tree:[],
             dialog: false,
-            testDirs:[],
-            testDirsConfig:[],
+            Dirs:[],
+            DirsConfig:[],
             orden:[],
             repeatIDStatus: false,
             repeatID: 0,
             snackbar: false,
             snackbarText: '',
-            saveDir:{name:'',url:''}
+            saveDir:{name:'',url:''},
+            dirsToSee:[]
           }
       },
       props: ['dirs'],
@@ -172,7 +175,6 @@
         let clasFileName = document.getElementsByClassName('v-treeview-node__label')
         for (var i = 0; i < clasFileName.length; i++) {
           clasFileName[i].addEventListener('click',function(e) {
-            console.log('-->',e.currentTarget.innerHTML)
           });
         } 
         this.saveDir = this.getSaveDir()
@@ -188,10 +190,7 @@
           this.changeSaveDir({'name':dirName,'url':realUri})
           document.getElementById('newSaveDir').value = ''
         })
-
-      },
-      created:function () {
-        
+        this.prepareDisrsAndItemsDirs()
       },
       methods:{
         getDirs(){
@@ -202,14 +201,30 @@
         },
         getConfigDirs(){
           let tempComf = []
-          for (let index = 0; index < this.testDirsConfig.length; index++) {
-            tempComf[index] = this.testDirsConfig[index]; 
+          for (let index = 0; index < this.DirsConfig.length; index++) {
+            tempComf[index] = this.DirsConfig[index]; 
           }
           return tempComf
         },
-        getDisrsAndList(){
-
+        async prepareDisrsAndItemsDirs() {
+          let dirs = await this.getDirs()
+           for (let index = 0; index < dirs.length; index++) {
+            const element = dirs[index];
+            await getFiles(element.url)
+            .then(files=> {
+              dirs[index].files = files
+            }) 
+          } 
+          if(dirs[0]){
+            let newTemp = { 'name': '', 'files': dirs[0].files}
+            dirs[dirs.length] = newTemp
+          }
+          this.dirsToSee = dirs
+          this.tabs = dirs.length -1
+          setTimeout(function(){ dirs.splice(-1,1);this.dirsToSee = dirs }, 10);
+          
         },
+
         removeDir(url){
           let thisDirs = this.getConfigDirs()
           for(var i = thisDirs.length - 1; i >= 0; i--) {
@@ -220,18 +235,19 @@
           for(var i = thisDirs.length - 1; i >= 0; i--) {
             thisDirs[i].id = i
           }
-          this.testDirsConfig = thisDirs
+          this.DirsConfig = thisDirs
         },
         updateDirs(thisDirs){
-          this.testDirs = thisDirs
+          this.Dirs = thisDirs
 
           this.orden = []
-          for (let index = 0; index < this.testDirs.length; index++) {
+          for (let index = 0; index < this.Dirs.length; index++) {
             this.orden.push(index)
           }
           localStorage.setItem("dirs", JSON.stringify(thisDirs));
           this.activeSnackbar('Directorios actualizados')
           this.dialog = false
+          this.prepareDisrsAndItemsDirs()
         },
         activeSnackbar(text){
           this.snackbar = true
@@ -276,7 +292,7 @@
         addToDirToStorage(newDir){
           let thisDirs = this.getConfigDirs()
           thisDirs[thisDirs.length] = { 'id':thisDirs.length, 'name': newDir.name, 'url': newDir.url}
-          this.testDirsConfig = thisDirs
+          this.DirsConfig = thisDirs
           this.updateOrder()
         },
         updateOrder(){
@@ -293,7 +309,7 @@
       watch: {
         dialog: function (newDialog) {
             if(newDialog){
-              this.testDirsConfig = this.getDirs()
+              this.DirsConfig = this.getDirs()
               this.updateOrder()
             }
         }

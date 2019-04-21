@@ -74,9 +74,7 @@ import App from './views/app';
     let vueElement = new Vue({
             el: '#app',
             render: h => h(App, {
-                props: {
-                    "dirs": dirs
-                }
+                props: {}
             })
         })
         /*     setInterval(async function() {

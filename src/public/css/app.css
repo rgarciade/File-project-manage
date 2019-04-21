@@ -5,6 +5,19 @@
  .element-add {
      position: fixed;
      bottom: 0px;
+     left: 3px;
      margin-right: auto;
      margin-left: auto;
+ }
+ 
+ .pasar-archivo {
+     position: fixed;
+     top: 47px;
+     left: 4px;
+     margin-right: auto;
+     margin-left: auto;
+ }
+ 
+ .item-file {
+     margin-top: 40px;
  }
