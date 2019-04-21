@@ -44,19 +44,50 @@
             :valu="tab"
           >
         <v-layout>
-        <v-flex>
+          <v-flex>
+            <v-card-text>
+              <v-treeview v-if="tab.files"
+                v-model="filesSelected[tab.id]"
+                :items="tab.files"
+                activatable
+                active-class="grey lighten-4 indigo--text"
+                selected-color="indigo"
+                selectable
+                on-icon="bookmark"
+                off-icon="bookmark"
+              >
+              </v-treeview>
+            </v-card-text>
+          </v-flex>
+          <v-divider vertical></v-divider>
+  
+        <v-flex
+          xs6
+        >
           <v-card-text>
-            <v-treeview
-              v-model="tree"
-              :items="tab.files"
-              activatable
-              active-class="grey lighten-4 indigo--text"
-              selected-color="indigo"
-              selectable
-              on-icon="bookmark"
-              off-icon="bookmark"
+            <div
+              v-if="selections.length === 0"
+              key="title"
+              class="title font-weight-light grey--text pa-3 text-xs-center"
             >
-            </v-treeview>
+             Ninguno seleccionado
+            </div>
+  
+            <v-scroll-x-transition
+              group
+              hide-on-leave
+            >
+              <v-chip
+                v-for="(selection, i) in selections"
+                :key="i"
+                color="grey"
+                dark
+                small
+              >
+                <v-icon left small>mdi-beer</v-icon>
+                {{ selection.name }}
+              </v-chip>
+            </v-scroll-x-transition>
           </v-card-text>
         </v-flex>
         </v-layout>
@@ -144,14 +175,19 @@
             <v-icon>add_box</v-icon>
           </v-btn>
         </div>
+        <div class='element-recharge'>
+          <v-btn color="primary" class='button-add' fab @click="prepareDisrsAndItemsDirs()">
+            <v-icon>replay</v-icon>
+          </v-btn>
+        </div>
         <div class='pasar-archivo'>
-          <v-btn  color="info">Pasar Archivos</v-btn>
+          <v-btn  color="info" @click="moveFile">Pasar Archivos</v-btn>
         </div>
   </v-app>
 </template>
 
 <script>
-  import { getFiles } from "../commonFunctions.js";
+  import { getFiles, moveFileToNewDir } from "../commonFunctions.js";
   export default {
       name: 'app',
       data(){
@@ -167,7 +203,9 @@
             snackbar: false,
             snackbarText: '',
             saveDir:{name:'',url:''},
-            dirsToSee:[]
+            dirsToSee:[],
+            filesSelected:[],
+            breweries:[]
           }
       },
       props: ['dirs'],
@@ -206,23 +244,26 @@
           }
           return tempComf
         },
-        async prepareDisrsAndItemsDirs() {
+        async prepareDisrsAndItemsDirs(change = false) {
           let dirs = await this.getDirs()
            for (let index = 0; index < dirs.length; index++) {
             const element = dirs[index];
             await getFiles(element.url)
             .then(files=> {
               dirs[index].files = files
+              dirs[index].id = index
             }) 
           } 
-          if(dirs[0]){
-            let newTemp = { 'name': '', 'files': dirs[0].files}
+          if(dirs[0] && change){
+            let newTemp = { 'name': '','id':dirs.length, 'files': [{id:999,name:'',url:''}]}
             dirs[dirs.length] = newTemp
           }
           this.dirsToSee = dirs
-          this.tabs = dirs.length -1
-          setTimeout(function(){ dirs.splice(-1,1);this.dirsToSee = dirs }, 10);
+          console.log(dirs)
           
+          if(change == 1){
+            setTimeout(function(){ dirs.splice(-1,1);this.dirsToSee = dirs }, 1);
+          }
         },
 
         removeDir(url){
@@ -247,7 +288,7 @@
           localStorage.setItem("dirs", JSON.stringify(thisDirs));
           this.activeSnackbar('Directorios actualizados')
           this.dialog = false
-          this.prepareDisrsAndItemsDirs()
+          this.prepareDisrsAndItemsDirs(1)
         },
         activeSnackbar(text){
           this.snackbar = true
@@ -304,6 +345,44 @@
               this.orden.push(index)
             }
           }
+        },
+        getSelection(tabId){
+          const selections = []
+          if(this.filesSelected[this.tabs]){
+            let files = this.dirsToSee[this.tabs].files
+            for (let index = 0; index < this.filesSelected[this.tabs].length; index++) {
+              const element = this.filesSelected[this.tabs][index];
+              const file = files[element]
+              selections.push(file)
+            }
+          }
+          return selections
+        },
+        moveFile(){
+          let filesSelecteds = this.getSelection(this.tabs)
+          if(this.dirsToSee[this.tabs + 1]){
+            let destinationDirectory= this.dirsToSee[this.tabs + 1 ].url
+            for (let index = 0; index < filesSelecteds.length; index++) {
+              const selected = filesSelecteds[index];
+              const destination = destinationDirectory +'/'+selected.name
+              moveFileToNewDir(selected.url, destination)
+              .then(this.prepareDisrsAndItemsDirs())
+              .catch(err => {
+                console.log(err)
+                this.activeSnackbar('error al copiar el archivo'+filesSelecteds[index].name)
+                })
+            }
+            this.filesSelected = []
+            
+          }else{
+            this.activeSnackbar('No existe proximo Directorios')
+          }
+
+        }        
+      },
+      computed:{
+        selections () {
+          return this.getSelection(this.tabs)
         }
       },
       watch: {

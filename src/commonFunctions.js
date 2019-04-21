@@ -11,13 +11,27 @@ const getFiles = (url) => {
                 for (let index = 0; index < flist.length; index++) {
                     const element = flist[index];
                     toreturn[index] = {}
+                    toreturn[index].id = index
                     toreturn[index].name = element
-                    toreturn[index].internal = `internal-${element}`
-
+                    toreturn[index].url = url + "/" + element
                 }
             }
             resolve(toreturn);
         })
     })
 }
-module.exports = { getFiles }
+const moveFileToNewDir = (oldPath, newPath) => {
+    return new Promise(function(resolve, reject) {
+        fs.rename(oldPath, newPath, function(err) {
+            if (err) {
+                if (err.code !== 'EXDEV') {
+                    reject(err)
+                }
+                resolve('ok')
+            }
+        });
+    })
+
+
+}
+module.exports = { getFiles, moveFileToNewDir }

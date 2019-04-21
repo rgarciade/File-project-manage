@@ -10,6 +10,14 @@
      margin-left: auto;
  }
  
+ .element-recharge {
+     position: fixed;
+     bottom: 0px;
+     left: 65px;
+     margin-right: auto;
+     margin-left: auto;
+ }
+ 
  .pasar-archivo {
      position: fixed;
      top: 47px;
