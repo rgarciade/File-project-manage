@@ -214,12 +214,13 @@
       },
       props: ['dirs'],
       mounted(){
-        let clasFileName = document.getElementsByClassName('v-treeview-node__label')
-        for (var i = 0; i < clasFileName.length; i++) {
-          clasFileName[i].addEventListener('click',function(e) {
-            console.log('aaa')
-          });
-        } 
+      
+        document.body.addEventListener('click', function (evt) {
+          if (evt.target.className === 'v-treeview-node__label') {
+            cosole.log(evt)
+          }
+        }, false);
+     
         this.saveDir = this.getSaveDir()
         document.getElementById('newDir').addEventListener('change', e => {
           let dirName = e.target.files[0].name
