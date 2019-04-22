@@ -186,14 +186,17 @@
           </v-btn>
         </div>
         <div class='pasar-archivo'>
-          <v-btn  color="info" @click="moveFile">Pasar Archivos</v-btn>
+          <v-btn small flat @click="openfocusDir"><v-icon>folder</v-icon></v-btn>
+          <v-btn  small color="success" @click="openFiles">abrir Archivos</v-btn>
+          <v-btn  small color="info" @click="moveFiles">Pasar Archivos</v-btn>
         </div>
   </v-app>
 </template>
 
 <script>
   import { getFiles, moveFileToNewDir, opendir, openFile } from "../commonFunctions.js";
-  export default {
+  
+  let app  = {
       name: 'app',
       data(){
           return { 
@@ -213,19 +216,7 @@
           }
       },
       props: ['dirs'],
-      mounted(){
-      
-        document.body.addEventListener('click', function (evt) {
-          if (evt.target.className === 'v-treeview-node__label') {
-            
-            let fileName = evt.srcElement.innerHTML
-          //  let urlFile = this.getAbsoluteUrl(fileName)
-           // console.log(urlFile)
-           // let urlFile = this.dirsToSee[this.tabs].url +'/'+fileName
-            //openFile(urlFile)
-          }
-        }, false);
-     
+      mounted(){    
         this.saveDir = this.getSaveDir()
         document.getElementById('newDir').addEventListener('change', e => {
           let dirName = e.target.files[0].name
@@ -242,7 +233,7 @@
         this.prepareDisrsAndItemsDirs()
       },
       methods:{
-        getAbsoluteUrl(fileName){
+        getAbsoluteUrlFile(fileName){
           return this.dirsToSee[this.tabs].url +'/'+fileName
         },
         getDirs(){
@@ -286,7 +277,6 @@
             dirs[dirs.length] = newTemp
           }
           this.dirsToSee = dirs
-          console.log(dirs)
           
           if(change == 1){
             setTimeout(function(){ dirs.splice(-1,1);this.dirsToSee = dirs }, 1);
@@ -315,7 +305,6 @@
           localStorage.setItem("dirs", JSON.stringify(thisDirs));
           this.activeSnackbar('Directorios actualizados')
           this.dialog = false
-          //this.prepareDisrsAndItemsDirs(1)
           location.reload();
         },
         activeSnackbar(text){
@@ -386,10 +375,29 @@
           }
           return selections
         },
-        moveFile(){
+        openFiles(){
           let filesSelecteds = this.getSelection(this.tabs)
-          console.log('this.dirsToSee',this.dirsToSee)
-          console.log('this.tabs',this.tabs)
+          if(this.dirsToSee[this.tabs]){
+            for (let index = 0; index < filesSelecteds.length; index++) {
+              const selected = filesSelecteds[index];
+              try {
+                openFile(selected.url)
+              } catch (error) {
+                console.log(error)
+              }
+            }
+          }   
+        },
+        openfocusDir(){
+          let destinationDirectory= this.dirsToSee[this.tabs].url
+              try {
+                openFile(destinationDirectory)
+              } catch (error) {
+                console.log(error)
+              }
+        },
+        moveFiles(){
+          let filesSelecteds = this.getSelection(this.tabs)
           if(this.dirsToSee[this.tabs + 1]){
             let destinationDirectory= this.dirsToSee[this.tabs + 1 ].url
             for (let index = 0; index < filesSelecteds.length; index++) {
@@ -407,7 +415,6 @@
           }else{
             this.activeSnackbar('No existe proximo Directorios')
           }
-
         }        
       },
       computed:{
@@ -438,6 +445,7 @@
         }
     },
   }
+  export default app
 </script>
 <style>
 </style>

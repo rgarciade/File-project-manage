@@ -34,6 +34,14 @@
      margin-left: auto;
  }
  
+ .abrir-archivo {
+     position: fixed;
+     top: 94px;
+     left: 4px;
+     margin-right: auto;
+     margin-left: auto;
+ }
+ 
  .item-file {
      margin-top: 40px;
  }
