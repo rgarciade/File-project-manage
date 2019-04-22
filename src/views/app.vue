@@ -103,7 +103,7 @@
         >
           <v-card>
             <v-toolbar card dark color="primary">
-              <v-btn icon dark @click="dialog = false">
+              <v-btn icon dark @click="dialog = 0">
                 <v-icon>close</v-icon>
               </v-btn>
               <v-toolbar-title>Directorios</v-toolbar-title>
@@ -192,7 +192,7 @@
 </template>
 
 <script>
-  import { getFiles, moveFileToNewDir, opendir } from "../commonFunctions.js";
+  import { getFiles, moveFileToNewDir, opendir, openFile } from "../commonFunctions.js";
   export default {
       name: 'app',
       data(){
@@ -217,7 +217,12 @@
       
         document.body.addEventListener('click', function (evt) {
           if (evt.target.className === 'v-treeview-node__label') {
-            cosole.log(evt)
+            
+            let fileName = evt.srcElement.innerHTML
+            let urlFile = this.getAbsoluteUrl(fileName)
+            console.log(urlFile)
+           // let urlFile = this.dirsToSee[this.tabs].url +'/'+fileName
+            //openFile(urlFile)
           }
         }, false);
      
@@ -237,6 +242,9 @@
         this.prepareDisrsAndItemsDirs()
       },
       methods:{
+        getAbsoluteUrl(fileName){
+          return this.dirsToSee[this.tabs].url +'/'+fileName
+        },
         getDirs(){
           return (localStorage.getItem('dirs'))? JSON.parse(localStorage.getItem('dirs')) : []
         },
@@ -254,6 +262,13 @@
           let saveDir = JSON.parse(localStorage.getItem('saveDir')).url ? JSON.parse(localStorage.getItem('saveDir')).url : null
           if(saveDir){
             opendir(saveDir)
+          }
+        },
+        closeDialogCheck(){
+          if(this.dirsToSee.length >= 1){
+            this.dialog = true
+          }else{
+            this.dialog = false
           }
         },
         async prepareDisrsAndItemsDirs(change = false) {
@@ -406,6 +421,16 @@
               this.DirsConfig = this.getDirs()
               this.updateOrder()
             }
+        },
+        dirsToSee: function (newDirsToSee){
+          if(newDirsToSee.length < 1 ){
+            this.dialog = true
+          }
+        },
+        dialog:function (newDialog){
+          if(!newDialog && this.dirsToSee.length == 0){
+            this.dialog = 1
+          }
         }
     },
   }

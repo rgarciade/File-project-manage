@@ -38,4 +38,7 @@ const moveFileToNewDir = (oldPath, newPath) => {
 const opendir = (url) => {
     shell.openItem(url)
 }
-module.exports = { getFiles, moveFileToNewDir, opendir }
+const openFile = (fileUrl) => {
+    shell.openItem(fileUrl)
+}
+module.exports = { getFiles, moveFileToNewDir, opendir, openFile }
