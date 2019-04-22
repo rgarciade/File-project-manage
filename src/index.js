@@ -1,7 +1,6 @@
 import { app, BrowserWindow, shell, ipcMain } from 'electron';
 import installExtension, { VUEJS_DEVTOOLS } from 'electron-devtools-installer';
 import { enableLiveReload } from 'electron-compile';
-shell.showItemInFolder('/home/raul/Documentos/salida.pdf ')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.

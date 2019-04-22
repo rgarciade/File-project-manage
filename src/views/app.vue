@@ -219,8 +219,8 @@
           if (evt.target.className === 'v-treeview-node__label') {
             
             let fileName = evt.srcElement.innerHTML
-            let urlFile = this.getAbsoluteUrl(fileName)
-            console.log(urlFile)
+          //  let urlFile = this.getAbsoluteUrl(fileName)
+           // console.log(urlFile)
            // let urlFile = this.dirsToSee[this.tabs].url +'/'+fileName
             //openFile(urlFile)
           }
@@ -430,6 +430,10 @@
         dialog:function (newDialog){
           if(!newDialog && this.dirsToSee.length == 0){
             this.dialog = 1
+          }
+          if(newDialog){
+              this.DirsConfig = this.getDirs()
+              this.updateOrder()
           }
         }
     },
