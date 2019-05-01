@@ -110,10 +110,15 @@
 
               <v-spacer></v-spacer>
                 <v-toolbar-items>
-                  <v-btn dark flat  @click="addNewDir" >
-                    <input id="newDir" type="file" webkitdirectory style="display: none" />
-                    <v-icon>create_new_folder</v-icon>
-                  </v-btn>
+                        <v-tooltip bottom>
+                          <template v-slot:activator="{ on }">
+                            <v-btn dark flat  @click="addNewDir" v-on="on">
+                              <input id="newDir" type="file" webkitdirectory style="display: none" />
+                                <v-icon>create_new_folder</v-icon>
+                            </v-btn>
+                          </template>
+                          <span>Añadir Carpeta</span>
+                        </v-tooltip>  
                 </v-toolbar-items>
                 <v-toolbar-items>
                   <v-btn dark flat @click="sabeDirConfif">Guardar</v-btn>
@@ -132,7 +137,7 @@
                           >
                   </v-select>
                 </v-flex>
-                <v-flex xs10>
+                <v-flex xs8>
                     <v-list-tile :key="index" avatar ripple>
                       <v-list-tile-content>
                         <v-list-tile-title>
@@ -142,51 +147,70 @@
                         <v-list-tile-sub-title>Dirección a la carpeta: {{ item.url }}</v-list-tile-sub-title>
                       </v-list-tile-content>
                       <v-list-tile-action>
-                          <v-icon color="grey lighten-1" @click="removeDir(item.url)">delete_forever</v-icon>
+                        <v-tooltip left>
+                          <template v-slot:activator="{ on }">
+                            <v-icon color="grey lighten-1" v-on="on"@click="removeDir(item.url)">delete_forever</v-icon>
+                          </template>
+                            <span>Quitar del programa</span>
+                        </v-tooltip>   
+                      </v-list-tile-action>
+                    </v-list-tile>
+                    <v-divider v-if="index < (DirsConfig.length -1)"  :key="`divider-${index}`" ></v-divider>
+                  </v-flex>
+                  <v-flex xs8>
+                    <v-list-tile :key="index" avatar ripple>
+                      <v-list-tile-content>
+                        <v-list-tile-title>
+                          Dirección de copia 
+                          </v-list-tile-title>
+                        <v-list-tile-sub-title> No asignado </v-list-tile-sub-title>
+                      </v-list-tile-content>
+                      <v-list-tile-action>
+                        <v-tooltip left>
+                          <template v-slot:activator="{ on }">
+                            <v-icon color="grey lighten-1" v-on="on"  @click="">label_important</v-icon>
+                          </template>
+                          <span>Copia Automatica</span>
+                        </v-tooltip>   
                       </v-list-tile-action>
                     </v-list-tile>
                     <v-divider v-if="index < (DirsConfig.length -1)"  :key="`divider-${index}`" ></v-divider>
                   </v-flex>
               </v-layout>
             </template>
-            <template>
-              <v-flex>
-                <v-card >
-                  <v-card-title primary-title>
-                    <div>
-                      <h3 class="headline mb-0">Directorio de guardado</h3>
-                      <div> {{saveDir.url}}</div>
-                    </div>
-                  </v-card-title>
-                  <v-card-actions>
-                    <v-btn flat icon @click="addNewSaveDir">
-                      <input id="newSaveDir" type="file" webkitdirectory style="display: none" />
-                      <v-icon>save_alt</v-icon>
-                    </v-btn>
-                  </v-card-actions>
-                </v-card>
-              </v-flex>
-            </template>
           </v-list>
           </v-card>
         </v-dialog>
         <div class='element-add'>
-          <v-btn color="primary" class='button-add' fab @click="dialog = true">
-            <v-icon>add_box</v-icon>
-          </v-btn>
+
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn color="blue" class='button-add' v-on="on" fab @click="dialog = true">
+                <v-icon>add_box</v-icon>
+              </v-btn>
+            </template>
+            <span>Configuración</span>
+          </v-tooltip>
+
         </div>
         <div class='element-recharge'>
-          <v-btn color="primary" class='button-add' fab @click="prepareDisrsAndItemsDirs()">
-            <v-icon>replay</v-icon>
-          </v-btn>
-        </div>
-        <div class='element-savedir'>
-          <v-btn color="blue" class='button-add' fab @click="openSaveDir()">
-            <v-icon>all_inbox</v-icon>
-          </v-btn>
+          <v-tooltip top>
+            <template v-slot:activator="{ on }">
+              <v-btn color="primary" class='button-add' v-on="on"  fab @click="prepareDisrsAndItemsDirs()">
+                <v-icon>replay</v-icon>
+              </v-btn>
+            </template>
+            <span>Regarga</span>
+          </v-tooltip>   
         </div>
         <div class='pasar-archivo'>
-          <v-btn small flat @click="openfocusDir"><v-icon>folder</v-icon></v-btn>
+          <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-btn small flat v-on="on" @click="openfocusDir"><v-icon>folder</v-icon></v-btn>
+              </template>
+              <span>Abrir Carpeta</span>
+          </v-tooltip>   
+          
           <v-btn  small color="success" @click="openFiles">abrir Archivos</v-btn>
           <v-btn  small color="info" @click="moveFiles">Pasar Archivos</v-btn>
         </div>
@@ -223,12 +247,6 @@
           let realUri = e.target.files[0].path
           this.addToDirToStorage({'name':dirName,'url':realUri})
           document.getElementById('newDir').value = ''
-        })
-        document.getElementById('newSaveDir').addEventListener('change', e => {
-          let dirName = e.target.files[0].name
-          let realUri = e.target.files[0].path
-          this.changeSaveDir({'name':dirName,'url':realUri})
-          document.getElementById('newSaveDir').value = ''
         })
         this.prepareDisrsAndItemsDirs()
       },
@@ -396,20 +414,21 @@
                 console.log(error)
               }
         },
-        moveFiles(){
+        moveFiles (){
           let filesSelecteds = this.getSelection(this.tabs)
           if(this.dirsToSee[this.tabs + 1]){
             let destinationDirectory= this.dirsToSee[this.tabs + 1 ].url
             for (let index = 0; index < filesSelecteds.length; index++) {
               const selected = filesSelecteds[index];
               const destination = destinationDirectory +'/'+selected.name
-              moveFileToNewDir(selected.url, destination)
+               moveFileToNewDir(selected.url, destination)
               .then(this.prepareDisrsAndItemsDirs())
               .catch(err => {
                 console.log(err)
                 this.activeSnackbar('error al copiar el archivo'+filesSelecteds[index].name)
                 })
             }
+            
             this.filesSelected = []
             
           }else{
