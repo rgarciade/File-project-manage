@@ -1,7 +1,11 @@
 var fs = require('fs');
 import { shell } from 'electron';
+
+
+function formatDate(date) {
+    return date.replace('T', ' ').split('.')[0]
+}
 const getFiles = (url) => {
-    console.log(url)
     return new Promise(function(resolve, reject) {
         fs.readdir(url, function(err, flist) {
             let toreturn = []
@@ -11,12 +15,15 @@ const getFiles = (url) => {
             if (flist && flist.length) {
                 for (let index = 0; index < flist.length; index++) {
                     const element = flist[index];
+                    const urlFile = url + "/" + element
+                    let mtime = formatDate(fs.statSync(urlFile).mtime.toISOString())
                     toreturn[index] = {}
                     toreturn[index].id = index
-                    toreturn[index].name = element
-                    toreturn[index].url = url + "/" + element
+                    toreturn[index].name = ` ${element} | ${mtime}`
+                    toreturn[index].url = urlFile
                 }
             }
+            console.log(toreturn)
             resolve(toreturn);
         })
     })

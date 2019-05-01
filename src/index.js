@@ -13,10 +13,10 @@ if (isDevMode) enableLiveReload();
 const createWindow = async() => {
     // Create the browser window.
     mainWindow = new BrowserWindow({
-        width: 800,
+        width: 925,
         height: 600,
         minHeight: 500,
-        minWidth: 800,
+        minWidth: 925,
         titleBarStyle: 'hidden'
     });
     mainWindow.setMenu(null);

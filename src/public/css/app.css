@@ -45,9 +45,15 @@
  .item-file {
      margin-top: 40px;
  }
- .v-treeview-node__label{
+ 
+ .v-treeview-node__label {
      font-size: 1em
  }
- .v-treeview-node__root{
-    min-height: 21px;
+ 
+ .v-treeview-node__root {
+     min-height: 21px;
+ }
+ 
+ .seleccionados {
+     background-color: white;
  }

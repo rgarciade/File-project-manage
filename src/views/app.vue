@@ -64,7 +64,7 @@
         <v-flex
           xs6
         >
-          <v-card-text>
+          <v-card-text class="seleccionados">
             <div
               v-if="selections.length === 0"
               key="title"
