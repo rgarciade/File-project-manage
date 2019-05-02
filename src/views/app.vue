@@ -149,7 +149,7 @@
                       <v-list-tile-action>
                         <v-tooltip left>
                           <template v-slot:activator="{ on }">
-                            <v-icon color="grey lighten-1" v-on="on"@click="removeDir(item.url)">delete_forever</v-icon>
+                            <v-icon color="grey lighten-1" v-on="on" @click="removeDir(item.url)">delete_forever</v-icon>
                           </template>
                             <span>Quitar del programa</span>
                         </v-tooltip>   
