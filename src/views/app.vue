@@ -227,21 +227,18 @@
             tabs:0,
             tree:[],
             dialog: false,
-            Dirs:[],
+            dirs:[],
             DirsConfig:[],
             orden:[],
             repeatIDStatus: false,
             repeatID: 0,
             snackbar: false,
             snackbarText: '',
-            saveDir:{name:'',url:''},
             dirsToSee:[],
             filesSelected:[]
           }
       },
-      props: ['dirs'],
       mounted(){    
-        this.saveDir = this.getSaveDir()
         document.getElementById('newDir').addEventListener('change', e => {
           let dirName = e.target.files[0].name
           let realUri = e.target.files[0].path
@@ -257,21 +254,12 @@
         getDirs(){
           return (localStorage.getItem('dirs'))? JSON.parse(localStorage.getItem('dirs')) : []
         },
-        getSaveDir(){
-          return (localStorage.getItem('saveDir'))? JSON.parse(localStorage.getItem('saveDir')) : {name:'no definido',url:'no definida'}
-        },
         getConfigDirs(){
           let tempComf = []
           for (let index = 0; index < this.DirsConfig.length; index++) {
             tempComf[index] = this.DirsConfig[index]; 
           }
           return tempComf
-        },
-        openSaveDir(){
-          let saveDir = JSON.parse(localStorage.getItem('saveDir')).url ? JSON.parse(localStorage.getItem('saveDir')).url : null
-          if(saveDir){
-            opendir(saveDir)
-          }
         },
         closeDialogCheck(){
           if(this.dirsToSee.length >= 1){
@@ -357,13 +345,6 @@
         },
         addNewDir(event){
           document.getElementById('newDir').click()
-        },
-        addNewSaveDir(event){
-          document.getElementById('newSaveDir').click()
-        },
-        changeSaveDir(newSaveDir){
-          localStorage.setItem("saveDir", JSON.stringify(newSaveDir));
-          this.saveDir = newSaveDir
         },
         addToDirToStorage(newDir){
           let thisDirs = this.getConfigDirs()
