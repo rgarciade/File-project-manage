@@ -1,1 +1,1 @@
-[{"_id":1,"casa":"azul"},{"_id":2,"casa":"amarilla"},{"_id":3,"casa":"azul"},{"_id":4,"casa":"verde"},{"_id":5,"casa":"verde"},{"_id":6,"casa":"verde"},{"_id":7,"casa":"amarilla","perro":null},{"_id":8,"casa":"amarilla","perro":"ff"},{"_id":9,"casa":"amarilla","perro":"hh"},{"_id":10,"casa":"amarilla","perro":"hh"}]
+[{"_id":2,"casa":"amarilla"},{"_id":4,"casa":"rosa"},{"_id":5,"casa":"rojo","perro":null},{"_id":6,"casa":"rosa"},{"_id":7,"casa":"amarilla","perro":null},{"_id":8,"casa":"amarilla","perro":"ff"}]
