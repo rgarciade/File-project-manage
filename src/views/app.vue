@@ -219,7 +219,7 @@
 
 <script>
   import { getFiles, moveFileToNewDir, opendir, openFile } from "../commonFunctions.js";
-  
+  import dataStorage from '../components/datastorage'
   let app  = {
       name: 'app',
       data(){
