@@ -60,6 +60,7 @@
  
  .seleccionados {
      background-color: white;
+     min-height: 80%;
  }
  
  .arrow {
@@ -91,4 +92,19 @@
  
  .animation-nueva {
      animation: latidos 2.5s infinite;
+ }
+ 
+ .filaca {
+     padding-top: 0px !important;
+     line-height: 0px;
+     padding-bottom: 0px;
+ }
+ 
+ .listaca {
+     padding-top: 16px !important;
+ }
+ 
+ .lista-fechas {
+     padding-top: 13px;
+     text-align: center;
  }

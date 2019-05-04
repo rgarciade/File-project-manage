@@ -62,7 +62,23 @@
           <v-divider vertical></v-divider>
   
         <v-flex
-          xs6
+          xs3
+          class="lista-fechas"
+        >
+          <v-list
+            v-for=" file in tab.files"
+            :key="file.name"
+            class="listaca "
+          >
+          <div class="filaca">
+             {{ file.mtime }}
+          </div>
+             
+          </v-list>
+        </v-flex>
+        <v-divider vertical></v-divider>
+        <v-flex
+          xs3
         >
           <v-card-text class="seleccionados">
             <div
