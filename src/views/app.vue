@@ -238,17 +238,48 @@
             <span>Recarga</span>
           </v-tooltip>   
         </div>
-        <div class='pasar-archivo'>
+  
+      <v-dialog
+        v-model="dialogCheck"
+        width="500"
+      >  <template v-slot:activator="{ on }">
+                <div class='pasar-archivo'>
           <v-tooltip bottom>
               <template v-slot:activator="{ on }">
-                <v-btn small flat v-on="on" @click="openfocusDir"><v-icon>folder</v-icon></v-btn>
+                <v-btn small flat @click="openfocusDir"><v-icon>folder</v-icon></v-btn>
               </template>
               <span>Abrir Carpeta</span>
           </v-tooltip>   
-          
           <v-btn  small color="success" @click="openFiles">abrir Archivos</v-btn>
-          <v-btn  small color="info" @click="moveFiles">Pasar Archivos</v-btn>
+          <v-btn  small color="info" v-on="on">Pasar Archivos</v-btn>
         </div>
+        </template>
+        <v-card>
+          <v-card-title
+            class="headline grey lighten-2"
+            primary-title
+          >
+            Confirmación
+          </v-card-title>
+  
+          <v-card-text>
+            ¿Confirma que quiere transpasar el archivo?
+          </v-card-text>
+  
+          <v-divider></v-divider>
+  
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              flat
+              @click="moveFiles"
+            >
+              transpasar
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
   </v-app>
 </template>
 
@@ -271,7 +302,8 @@
             snackbarText: '',
             dirsToSee:[],
             filesSelected:[],
-            copyDirId:null
+            copyDirId:null,
+            dialogCheck:false
           }
       },
       mounted(){    
@@ -469,6 +501,7 @@
               }
         },
         moveFiles (){
+          this.dialogCheck = false; 
           let filesSelecteds = this.getSelection(this.tabs)
           if(this.dirsToSee[this.tabs + 1]){
             let destinationDirectory= this.dirsToSee[this.tabs + 1 ].url
