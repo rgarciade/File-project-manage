@@ -252,7 +252,16 @@
           return this.dirsToSee[this.tabs].url +'/'+fileName
         },
         getDirs(){
-          return (localStorage.getItem('dirs'))? JSON.parse(localStorage.getItem('dirs')) : []
+          return new Promise(function(resolve, reject) {
+            resolve(dataStorage.getVal('nombre', '=', 'dirs').then(val => {
+                if(val[0] && val[0]['datos']){
+                  return val[0]['datos']
+                }else{
+                  return []
+                }
+              })
+            )
+          })
         },
         getConfigDirs(){
           let tempComf = []
@@ -405,9 +414,9 @@
                moveFileToNewDir(selected.url, destination)
               .then(this.prepareDisrsAndItemsDirs())
               .catch(err => {
-                console.log(err)
-                this.activeSnackbar('error al copiar el archivo'+filesSelecteds[index].name)
-                })
+                  console.log(err)
+                  this.activeSnackbar('error al copiar el archivo'+filesSelecteds[index].name)
+              })
             }
             
             this.filesSelected = []
@@ -423,23 +432,18 @@
         }
       },
       watch: {
-        dialog: function (newDialog) {
-            if(newDialog){
-              this.DirsConfig = this.getDirs()
-              this.updateOrder()
-            }
-        },
         dirsToSee: function (newDirsToSee){
           if(newDirsToSee.length < 1 ){
             this.dialog = true
           }
         },
-        dialog:function (newDialog){
+        dialog: async function (newDialog){
           if(!newDialog && this.dirsToSee.length == 0){
             this.dialog = 1
           }
           if(newDialog){
-              this.DirsConfig = this.getDirs()
+              this.DirsConfig = await this.getDirs()
+              console.log('gg',this.DirsConfig)
               this.updateOrder()
           }
         }

@@ -1,1 +1,1 @@
-[]
+[{ "_id": 1, "nombre": "dirs", "datos": [{ "id": 0, "name": "prueba1", "url": "/home/raul/repos/electron/ficheros/test/prueba1" }, { "id": 1, "name": "prueba2", "url": "/home/raul/repos/electron/ficheros/test/prueba2" }, { "id": 2, "name": "prueba3", "url": "/home/raul/repos/electron/ficheros/test/prueba3" }, { "id": 3, "name": "salvado", "url": "/home/raul/repos/electron/ficheros/test/salvado" }] }]
