@@ -107,9 +107,11 @@
                 <v-icon>close</v-icon>
               </v-btn>
               <v-toolbar-title>Directorios</v-toolbar-title>
-
               <v-spacer></v-spacer>
               <input id="newCopyDir" type="file" webkitdirectory style="display: none" />
+              <v-toolbar-title v-if="DirsConfig.length < 1" class="animation-nueva">
+                agregar carpetas  <v-icon >arrow_right_alt </v-icon>
+              </v-toolbar-title>
                 <v-toolbar-items>
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on }">
@@ -126,7 +128,16 @@
                   <v-btn dark flat @click="sabeDirConfif">Guardar</v-btn>
                 </v-toolbar-items>
             </v-toolbar>
-                <v-list two-line>
+            <v-flex v-if="DirsConfig.length < 1" sm6 offset-sm3 class="initial-card">
+                <v-card> 
+                  <v-card-title primary-title>
+                    <div>
+                      <h3 class="headline mb-0">Seleccione las carpetas para comenzar</h3>
+                    </div>
+                  </v-card-title>
+                </v-card>
+              </v-flex>
+            <v-list two-line>
             <template v-for="(item, index) in DirsConfig">
               <v-layout row :key="index">
                 <v-flex xs2 >
@@ -170,15 +181,15 @@
                       <v-list-tile-action>
                         <v-tooltip left>
                           <template v-slot:activator="{ on }">
-                            <v-icon color="grey lighten-1" v-on="on" class="arrow"  @click="selectCopyFile(item.id)">label_important</v-icon>
-                          </template>
-                          <span>Copia automatica</span>
-                        </v-tooltip>   
-                        <v-tooltip left>
-                          <template v-slot:activator="{ on }">
                             <v-icon v-if="item.copydir && item.copydir != ''"  color="grey lighten-1" v-on="on" class="clea-Copy-directory"  @click="removeCopyFile(item.id)">clear</v-icon>
                           </template>
                           <span>quitar copia  automatica</span>
+                        </v-tooltip>   
+                        <v-tooltip left>
+                          <template v-slot:activator="{ on }">
+                            <v-icon color="grey lighten-1" v-on="on" class="arrow"  @click="selectCopyFile(item.id)">label_important</v-icon>
+                          </template>
+                          <span>Copia automatica</span>
                         </v-tooltip>   
                       </v-list-tile-action>
                     </v-list-tile>
@@ -476,7 +487,6 @@
           }
           if(newDialog){
               this.DirsConfig = await getDirs()
-              console.log('gg',this.DirsConfig)
               this.updateOrder()
           }
         }

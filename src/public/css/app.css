@@ -71,3 +71,24 @@
      position: fixed;
      right: 46px;
  }
+ 
+ .initial-card {
+     top: 20%;
+     position: inherit;
+ }
+ 
+ @keyframes latidos {
+     from {
+         transform: none;
+     }
+     50% {
+         transform: scale(1.2);
+     }
+     to {
+         transform: none;
+     }
+ }
+ 
+ .animation-nueva {
+     animation: latidos 2.5s infinite;
+ }
