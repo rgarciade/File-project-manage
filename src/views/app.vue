@@ -172,7 +172,13 @@
                           <template v-slot:activator="{ on }">
                             <v-icon color="grey lighten-1" v-on="on" class="arrow"  @click="selectCopyFile(item.id)">label_important</v-icon>
                           </template>
-                          <span>Copia Automatica</span>
+                          <span>Copia automatica</span>
+                        </v-tooltip>   
+                        <v-tooltip left>
+                          <template v-slot:activator="{ on }">
+                            <v-icon v-if="item.copydir && item.copydir != ''"  color="grey lighten-1" v-on="on" class="clea-Copy-directory"  @click="removeCopyFile(item.id)">clear</v-icon>
+                          </template>
+                          <span>quitar copia  automatica</span>
                         </v-tooltip>   
                       </v-list-tile-action>
                     </v-list-tile>
@@ -251,7 +257,6 @@
         document.getElementById('newCopyDir').addEventListener('change', e => {
           let dirName = e.target.files[0].name
           let realUri = e.target.files[0].path
-          console.log('realUri',realUri)
           this.addCopyToDirToStorage(realUri)
           document.getElementById('newCopyDir').value = ''
         })
@@ -363,6 +368,10 @@
           this.copyDirId = id
           document.getElementById('newCopyDir').click()
         },
+        removeCopyFile(id){
+          this.copyDirId = id
+          this.removeCopyToDirToStorage()
+        },
         addToDirToStorage(newDir){
           let thisDirs = this.getConfigDirs()
           thisDirs[thisDirs.length] = { 'id':thisDirs.length, 'name': newDir.name, 'url': newDir.url}
@@ -373,6 +382,14 @@
           let thisDirs = this.getConfigDirs()
           if(this.copyDirId != null){
             thisDirs[this.copyDirId].copydir = url
+            this.DirsConfig = thisDirs
+            this.updateOrder()
+          }
+        },
+        removeCopyToDirToStorage(){
+          let thisDirs = this.getConfigDirs()
+          if(this.copyDirId != null){
+            thisDirs[this.copyDirId].copydir = ''
             this.DirsConfig = thisDirs
             this.updateOrder()
           }
