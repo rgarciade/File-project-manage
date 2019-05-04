@@ -1,9 +1,20 @@
 var fs = require('fs');
 import { shell } from 'electron';
-
+import dataStorage from './components/datastorage'
 
 function formatDate(date) {
     return date.replace('T', ' ').split('.')[0]
+}
+const getDirs = () => {
+    return new Promise(function(resolve, reject) {
+        resolve(dataStorage.getVal('nombre', '=', 'dirs').then(val => {
+            if (val[0] && val[0]['datos']) {
+                return val[0]['datos']
+            } else {
+                return []
+            }
+        }))
+    })
 }
 const getFiles = (url) => {
     return new Promise(function(resolve, reject) {
@@ -42,10 +53,13 @@ const moveFileToNewDir = (oldPath, newPath) => {
 
 
 }
+const checkIfNeedCopy = () => {
+
+}
 const opendir = (url) => {
     shell.openItem(url)
 }
 const openFile = (fileUrl) => {
     shell.openItem(fileUrl)
 }
-module.exports = { getFiles, moveFileToNewDir, opendir, openFile }
+module.exports = { getFiles, moveFileToNewDir, opendir, openFile, checkIfNeedCopy, getDirs }

@@ -61,3 +61,8 @@
  .seleccionados {
      background-color: white;
  }
+ 
+ .arrow {
+     position: fixed;
+     right: 16px;
+ }

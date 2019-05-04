@@ -170,7 +170,7 @@
                       <v-list-tile-action>
                         <v-tooltip left>
                           <template v-slot:activator="{ on }">
-                            <v-icon color="grey lighten-1" v-on="on"  @click="selectCopyFile(item.id)">label_important</v-icon>
+                            <v-icon color="grey lighten-1" v-on="on" class="arrow"  @click="selectCopyFile(item.id)">label_important</v-icon>
                           </template>
                           <span>Copia Automatica</span>
                         </v-tooltip>   
@@ -220,7 +220,7 @@
 </template>
 
 <script>
-  import { getFiles, moveFileToNewDir, opendir, openFile } from "../commonFunctions.js";
+  import { getFiles, moveFileToNewDir, opendir, openFile, getDirs } from "../commonFunctions.js";
   import dataStorage from '../components/datastorage'
   let app  = {
       name: 'app',
@@ -261,18 +261,6 @@
         getAbsoluteUrlFile(fileName){
           return this.dirsToSee[this.tabs].url +'/'+fileName
         },
-        getDirs(){
-          return new Promise(function(resolve, reject) {
-            resolve(dataStorage.getVal('nombre', '=', 'dirs').then(val => {
-                if(val[0] && val[0]['datos']){
-                  return val[0]['datos']
-                }else{
-                  return []
-                }
-              })
-            )
-          })
-        },
         getConfigDirs(){
           let tempComf = []
           for (let index = 0; index < this.DirsConfig.length; index++) {
@@ -288,7 +276,7 @@
           }
         },
         async prepareDisrsAndItemsDirs(change = false) {
-          let dirs = await this.getDirs()
+          let dirs = await getDirs()
            for (let index = 0; index < dirs.length; index++) {
             const element = dirs[index];
             await getFiles(element.url)
@@ -327,10 +315,16 @@
           for (let index = 0; index < this.Dirs.length; index++) {
             this.orden.push(index)
           }
-          localStorage.setItem("dirs", JSON.stringify(thisDirs));
-          this.activeSnackbar('Directorios actualizados')
-          this.dialog = false
-          location.reload();
+          dataStorage.getVal('nombre', '=', 'dirs').then(dataStorageData =>{
+            if(dataStorageData[0]){
+              dataStorage.updateVals('nombre', '=', 'dirs', { "datos": thisDirs }).then(a => console.log(a))
+            }else{
+              dataStorage.setVal({ "nombre": "dirs", "datos": thisDirs  })
+            }
+            this.activeSnackbar('Directorios actualizados')
+            this.dialog = false
+            location.reload();
+          })
         },
         activeSnackbar(text){
           this.snackbar = true
@@ -464,7 +458,7 @@
             this.dialog = 1
           }
           if(newDialog){
-              this.DirsConfig = await this.getDirs()
+              this.DirsConfig = await getDirs()
               console.log('gg',this.DirsConfig)
               this.updateOrder()
           }
