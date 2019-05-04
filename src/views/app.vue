@@ -109,11 +109,13 @@
               <v-toolbar-title>Directorios</v-toolbar-title>
 
               <v-spacer></v-spacer>
+              <input id="newCopyDir" type="file" webkitdirectory style="display: none" />
                 <v-toolbar-items>
                         <v-tooltip bottom>
                           <template v-slot:activator="{ on }">
                             <v-btn dark flat  @click="addNewDir" v-on="on">
                               <input id="newDir" type="file" webkitdirectory style="display: none" />
+                              
                                 <v-icon>create_new_folder</v-icon>
                             </v-btn>
                           </template>
@@ -163,12 +165,12 @@
                         <v-list-tile-title>
                           Dirección de copia 
                           </v-list-tile-title>
-                        <v-list-tile-sub-title> No asignado </v-list-tile-sub-title>
+                        <v-list-tile-sub-title> {{(item.copydir && item.copydir != '')? item.copydir: "No asignado" }} </v-list-tile-sub-title>
                       </v-list-tile-content>
                       <v-list-tile-action>
                         <v-tooltip left>
                           <template v-slot:activator="{ on }">
-                            <v-icon color="grey lighten-1" v-on="on"  @click="">label_important</v-icon>
+                            <v-icon color="grey lighten-1" v-on="on"  @click="selectCopyFile(item.id)">label_important</v-icon>
                           </template>
                           <span>Copia Automatica</span>
                         </v-tooltip>   
@@ -235,7 +237,8 @@
             snackbar: false,
             snackbarText: '',
             dirsToSee:[],
-            filesSelected:[]
+            filesSelected:[],
+            copyDirId:null
           }
       },
       mounted(){    
@@ -244,6 +247,13 @@
           let realUri = e.target.files[0].path
           this.addToDirToStorage({'name':dirName,'url':realUri})
           document.getElementById('newDir').value = ''
+        })
+        document.getElementById('newCopyDir').addEventListener('change', e => {
+          let dirName = e.target.files[0].name
+          let realUri = e.target.files[0].path
+          console.log('realUri',realUri)
+          this.addCopyToDirToStorage(realUri)
+          document.getElementById('newCopyDir').value = ''
         })
         this.prepareDisrsAndItemsDirs()
       },
@@ -355,11 +365,23 @@
         addNewDir(event){
           document.getElementById('newDir').click()
         },
+        selectCopyFile(id){
+          this.copyDirId = id
+          document.getElementById('newCopyDir').click()
+        },
         addToDirToStorage(newDir){
           let thisDirs = this.getConfigDirs()
           thisDirs[thisDirs.length] = { 'id':thisDirs.length, 'name': newDir.name, 'url': newDir.url}
           this.DirsConfig = thisDirs
           this.updateOrder()
+        },
+        addCopyToDirToStorage(url){
+          let thisDirs = this.getConfigDirs()
+          if(this.copyDirId != null){
+            thisDirs[this.copyDirId].copydir = url
+            this.DirsConfig = thisDirs
+            this.updateOrder()
+          }
         },
         updateOrder(){
           if(this.getConfigDirs()){
