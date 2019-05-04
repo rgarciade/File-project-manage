@@ -35,7 +35,6 @@ const getFiles = (url) => {
                     toreturn[index].url = urlFile
                 }
             }
-            console.log(toreturn)
             resolve(toreturn);
         })
     })

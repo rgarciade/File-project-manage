@@ -235,7 +235,7 @@
                 <v-icon>replay</v-icon>
               </v-btn>
             </template>
-            <span>Regarga</span>
+            <span>Recarga</span>
           </v-tooltip>   
         </div>
         <div class='pasar-archivo'>
@@ -275,6 +275,7 @@
           }
       },
       mounted(){    
+        let that = this
         document.getElementById('newDir').addEventListener('change', e => {
           let dirName = e.target.files[0].name
           let realUri = e.target.files[0].path
@@ -287,6 +288,9 @@
           this.addCopyToDirToStorage(realUri)
           document.getElementById('newCopyDir').value = ''
         })
+        setInterval(function(){ 
+          that.prepareDisrsAndItemsDirs()
+        }, 4000);
         this.prepareDisrsAndItemsDirs()
       },
       methods:{
