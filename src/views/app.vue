@@ -424,17 +424,17 @@
           let filesSelecteds = this.getSelection(this.tabs)
           if(this.dirsToSee[this.tabs + 1]){
             let destinationDirectory= this.dirsToSee[this.tabs + 1 ].url
+            let promises = [];
             for (let index = 0; index < filesSelecteds.length; index++) {
               const selected = filesSelecteds[index];
-              const destination = destinationDirectory +'/'+selected.name
-               moveFileToNewDir(selected.url, destination)
-              .then(this.prepareDisrsAndItemsDirs())
+              promises.push(moveFileToNewDir(destinationDirectory, selected.name, selected.url))
+            }
+            Promise.all(promises)
+             .then(this.prepareDisrsAndItemsDirs())
               .catch(err => {
                   console.log(err)
                   this.activeSnackbar('error al copiar el archivo'+filesSelecteds[index].name)
               })
-            }
-            
             this.filesSelected = []
             
           }else{

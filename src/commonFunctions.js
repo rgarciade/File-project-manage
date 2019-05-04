@@ -30,7 +30,8 @@ const getFiles = (url) => {
                     let mtime = formatDate(fs.statSync(urlFile).mtime.toISOString())
                     toreturn[index] = {}
                     toreturn[index].id = index
-                    toreturn[index].name = ` ${element} | ${mtime}`
+                    toreturn[index].name = element
+                    toreturn[index].mtime = mtime
                     toreturn[index].url = urlFile
                 }
             }
@@ -39,9 +40,27 @@ const getFiles = (url) => {
         })
     })
 }
-const moveFileToNewDir = (oldPath, newPath) => {
-    return new Promise(function(resolve, reject) {
-        fs.rename(oldPath, newPath, function(err) {
+const moveFileToNewDir = (destinationDirectory, name, oldPath) => {
+    const destination = destinationDirectory + '/' + name
+    return new Promise(async function(resolve, reject) {
+        await getDirs().then(rowsDirs => {
+            for (let index = 0; index < rowsDirs.length; index++) {
+                const rowDir = rowsDirs[index];
+                if (rowDir.copydir && destinationDirectory == rowDir.url) {
+                    let alternativeCopyDir = rowDir.copydir + '/' + name
+                    fs.copyFile(oldPath, alternativeCopyDir, function(err) {
+                        if (err) {
+                            if (err.code !== 'EXDEV') {
+                                reject(err)
+                            }
+                        }
+                    });
+                }
+            }
+        })
+
+
+        fs.rename(oldPath, destination, function(err) {
             if (err) {
                 if (err.code !== 'EXDEV') {
                     reject(err)
