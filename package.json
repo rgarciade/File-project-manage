@@ -56,7 +56,7 @@
         "packageManager": "npm"
       },
       "electronWinstallerConfig": {
-        "name": "storagecontrol"
+        "name": "ficheros"
       },
       "electronInstallerDebian": {},
       "electronInstallerRedhat": {},
@@ -66,12 +66,12 @@
       },
       "windowsStoreConfig": {
         "packageName": "",
-        "name": "storagecontrol"
+        "name": "ficheros"
       }
     }
   },
   "keywords": [],
   "license": "MIT",
   "main": "src/index.js",
-  "productName": "storagecontrol"
+  "productName": "ficheros"
 }
