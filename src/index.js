@@ -7,7 +7,7 @@ import { enableLiveReload } from 'electron-compile';
 let mainWindow;
 
 const isDevMode = process.execPath.match(/[\\/]electron/);
-
+global.platform = process.platform
 if (isDevMode) enableLiveReload();
 
 const createWindow = async() => {

@@ -361,6 +361,7 @@
 <script>
   import { getFiles, moveFileToNewDir, opendir, openFile, getDirs, checkPasswordExistInTheProgram, insertNewPass, checkPassword } from "../commonFunctions.js";
   import dataStorage from '../components/datastorage'
+  import { remote } from 'electron'
   let app  = {
       name: 'app',
       data(){
@@ -606,9 +607,6 @@
         openCopyDir(){
           if(this.dirsToSee[this.tabs]['copydir'] && this.dirsToSee[this.tabs]['copydir'] !=''){
             let dirUrl = this.dirsToSee[this.tabs]['copydir']
-            let name = dirUrl.substring(dirUrl.lastIndexOf('/')+1);
-            this.nameCopyDir = name
-            a.substring(a.lastIndexOf('/')+1);
             openFile(this.dirsToSee[this.tabs]['copydir'])
           }
         },
@@ -657,7 +655,8 @@
         tabs: function (){
             if(this.dirsToSee[this.tabs]['copydir'] && this.dirsToSee[this.tabs]['copydir'] !=''){
               let dirUrl = this.dirsToSee[this.tabs]['copydir']
-              let name = dirUrl.substring(dirUrl.lastIndexOf('/')+1);
+              const dirSeparator = ( remote.getGlobal('platform') == "win32" )? '\\' :'/'
+              let name = dirUrl.substring(dirUrl.lastIndexOf(dirSeparator)+1);
               this.nameCopyDir = name
             }
         },
