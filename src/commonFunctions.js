@@ -16,6 +16,49 @@ const getDirs = () => {
         }))
     })
 }
+const getPassword = () => {
+    return new Promise(function(resolve, reject) {
+        resolve(dataStorage.getVal('nombre', '=', 'password').then(val => {
+            if (val[0] && val[0]['datos']) {
+                return val[0]['datos']
+            } else {
+                return null
+            }
+        }))
+    })
+}
+
+const checkPasswordExistInTheProgram = async() => {
+    const passFromFile = await getPassword()
+    if (passFromFile == null) {
+        return false
+    }
+    return true
+}
+
+const insertNewPass = (pass, passTocheck) => {
+
+    return new Promise(async function(resolve, reject) {
+        if (pass == passTocheck) {
+            await dataStorage.setVal({ "nombre": "password", "datos": pass }).then(a => {
+                resolve(true)
+            })
+        } else {
+            reject(false)
+        }
+    })
+}
+const checkPassword = (pass) => {
+    return new Promise(async function(resolve, reject) {
+        const passFromFile = await getPassword()
+        if (passFromFile == pass) {
+            resolve(true)
+        } else {
+            reject(false)
+        }
+    })
+
+}
 const getFiles = (url) => {
     return new Promise(function(resolve, reject) {
         fs.readdir(url, function(err, flist) {
@@ -80,4 +123,4 @@ const opendir = (url) => {
 const openFile = (fileUrl) => {
     shell.openItem(fileUrl)
 }
-module.exports = { getFiles, moveFileToNewDir, opendir, openFile, checkIfNeedCopy, getDirs }
+module.exports = { getFiles, moveFileToNewDir, opendir, openFile, checkIfNeedCopy, getDirs, checkPasswordExistInTheProgram, insertNewPass, checkPassword }

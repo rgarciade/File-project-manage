@@ -141,7 +141,7 @@
                         </v-tooltip>  
                 </v-toolbar-items>
                 <v-toolbar-items>
-                  <v-btn dark flat @click="sabeDirConfif">Guardar</v-btn>
+                  <v-btn dark flat @click="checkPasswordExist">Guardar</v-btn>
                 </v-toolbar-items>
             </v-toolbar>
             <v-flex v-if="DirsConfig.length < 1" sm6 offset-sm3 class="initial-card">
@@ -241,8 +241,8 @@
   
       <v-dialog
         v-model="dialogCheck"
-        width="500"
-      >  <template v-slot:activator="{ on }">
+        width="500">
+        <template v-slot:activator="{ on }">
                 <div class='pasar-archivo'>
           <v-tooltip bottom>
               <template v-slot:activator="{ on }">
@@ -261,30 +261,102 @@
           >
             Confirmación
           </v-card-title>
-  
           <v-card-text>
             ¿Confirma que quiere transpasar el archivo?
           </v-card-text>
-  
           <v-divider></v-divider>
-  
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
               color="primary"
               flat
-              @click="moveFiles"
-            >
+              @click="moveFiles">
               transpasar
             </v-btn>
           </v-card-actions>
         </v-card>
       </v-dialog>
+
+      <v-dialog
+        v-model="CheckNewPasswordStatus"
+        width="500">
+        <template v-slot:activator="{ on }">  
+          <v-btn small flat @click="" id="chekpass" style="display: none"><v-icon></v-icon></v-btn>
+        </template>
+        <v-card>
+          <v-card-title
+            class="headline grey lighten-2"
+            primary-title
+          >
+            Nueva contraseña
+          </v-card-title>
+          <v-card-text>
+            Introduce la nueva contraseña
+                        <v-text-field
+              v-model="firstPass"
+              label="Contraseña"
+              required
+            ></v-text-field>
+            <v-text-field
+              v-model="seconfPass"
+              label="Repita la contraseña"
+              required
+            ></v-text-field>
+          </v-card-text>
+
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              flat
+              @click="createPass">
+              Crea Contraseña
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+      <v-dialog
+        v-model="CheckPasswordStatus"
+        width="500">
+        <template v-slot:activator="{ on }">  
+          <v-btn small flat @click="" id="chekpass" style="display: none"><v-icon></v-icon></v-btn>
+        </template>
+        <v-card>
+          <v-card-title
+            class="headline grey lighten-2"
+            primary-title
+          >
+            comprueba contraseña
+          </v-card-title>
+          <v-card-text>
+            Comprueba la contraseña
+                        <v-text-field
+              v-model="compobarPass"
+              label="Contraseña"
+              required
+            ></v-text-field>
+          </v-card-text>
+
+          <v-divider></v-divider>
+          <v-card-actions>
+            <v-spacer></v-spacer>
+            <v-btn
+              color="primary"
+              flat
+              @click="checkUpdatePassword">
+              actualizar datos
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
   </v-app>
 </template>
 
 <script>
-  import { getFiles, moveFileToNewDir, opendir, openFile, getDirs } from "../commonFunctions.js";
+  import { getFiles, moveFileToNewDir, opendir, openFile, getDirs, checkPasswordExistInTheProgram, insertNewPass, checkPassword } from "../commonFunctions.js";
   import dataStorage from '../components/datastorage'
   let app  = {
       name: 'app',
@@ -303,7 +375,12 @@
             dirsToSee:[],
             filesSelected:[],
             copyDirId:null,
-            dialogCheck:false
+            dialogCheck:false,
+            CheckNewPasswordStatus:false,
+            CheckPasswordStatus:false,
+            firstPass:'',
+            seconfPass:'',
+            compobarPass:'',
           }
       },
       mounted(){    
@@ -326,6 +403,34 @@
         this.prepareDisrsAndItemsDirs()
       },
       methods:{
+        checkUpdatePassword(){
+          checkPassword(this.compobarPass).then(resp =>{
+            this.sabeDirConfif()
+            this.activeSnackbar('directorios actualizados')
+          }).catch(()=>this.activeSnackbar('error con la contraseña'))
+        },
+        createPass(){
+          if(this.firstPass == this.seconfPass){
+            insertNewPass(this.firstPass,this.seconfPass).then(status =>{
+                this.CheckNewPasswordStatus = false
+                this.sabeDirConfif()
+                this.activeSnackbar('contraseña creada')
+            }).catch(err => this.activeSnackbar('ocurrió un error al crear la contraseña'))
+          }else{
+            this.activeSnackbar('las contraseñas no son iguales')
+          }
+        },
+        checkPasswordExist(){
+          checkPasswordExistInTheProgram().then(resp =>{
+            if(!resp){
+              //no existepass, crear
+              this.CheckNewPasswordStatus = true
+            }else{
+              //existe pass, comprobar
+              this.CheckPasswordStatus = true
+            }
+          })
+        },
         getAbsoluteUrlFile(fileName){
           return this.dirsToSee[this.tabs].url +'/'+fileName
         },
