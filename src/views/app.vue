@@ -252,6 +252,9 @@
           </v-tooltip>   
           <v-btn  small color="success" @click="openFiles">abrir Archivos</v-btn>
           <v-btn  small color="info" v-on="on">Pasar Archivos</v-btn>
+          <v-scroll-y-transition>
+          <v-btn v-if="(dirsToSee[tabs] && dirsToSee[tabs]['copydir'])" small color="green" @click="openCopyDir()">Abrir {{nameCopyDir}}</v-btn>
+          </v-scroll-y-transition>
         </div>
         </template>
         <v-card>
@@ -381,6 +384,7 @@
             firstPass:'',
             seconfPass:'',
             compobarPass:'',
+            nameCopyDir:''
           }
       },
       mounted(){    
@@ -450,6 +454,7 @@
         },
         async prepareDisrsAndItemsDirs(change = false) {
           let dirs = await getDirs()
+          
            for (let index = 0; index < dirs.length; index++) {
             const element = dirs[index];
             await getFiles(element.url)
@@ -462,6 +467,7 @@
             let newTemp = { 'name': '','id':dirs.length, 'files': [{id:999,name:'',url:''}]}
             dirs[dirs.length] = newTemp
           }
+          
           this.dirsToSee = dirs
           
           if(change == 1){
@@ -597,6 +603,15 @@
             }
           }   
         },
+        openCopyDir(){
+          if(this.dirsToSee[this.tabs]['copydir'] && this.dirsToSee[this.tabs]['copydir'] !=''){
+            let dirUrl = this.dirsToSee[this.tabs]['copydir']
+            let name = dirUrl.substring(dirUrl.lastIndexOf('/')+1);
+            this.nameCopyDir = name
+            a.substring(a.lastIndexOf('/')+1);
+            openFile(this.dirsToSee[this.tabs]['copydir'])
+          }
+        },
         openfocusDir(){
           let destinationDirectory= this.dirsToSee[this.tabs].url
               try {
@@ -638,6 +653,13 @@
           if(newDirsToSee.length < 1 ){
             this.dialog = true
           }
+        },
+        tabs: function (){
+            if(this.dirsToSee[this.tabs]['copydir'] && this.dirsToSee[this.tabs]['copydir'] !=''){
+              let dirUrl = this.dirsToSee[this.tabs]['copydir']
+              let name = dirUrl.substring(dirUrl.lastIndexOf('/')+1);
+              this.nameCopyDir = name
+            }
         },
         dialog: async function (newDialog){
           if(!newDialog && this.dirsToSee.length == 0){
