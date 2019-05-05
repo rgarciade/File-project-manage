@@ -100,15 +100,11 @@ const moveFileToNewDir = (destinationDirectory, name, oldPath) => {
                 }
             }
         })
-
-
         fs.rename(oldPath, destination, function(err) {
-            if (err) {
-                if (err.code !== 'EXDEV') {
+            if (err && err.code !== 'EXDEV') {
                     reject(err)
-                }
-                resolve('ok')
             }
+            resolve('ok')
         });
     })
 

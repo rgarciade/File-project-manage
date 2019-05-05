@@ -271,6 +271,12 @@
           <v-card-actions>
             <v-spacer></v-spacer>
             <v-btn
+              color="red"
+              flat
+              @click="dialogCheck = false">
+              cancelar
+            </v-btn>           
+            <v-btn
               color="primary"
               flat
               @click="moveFiles">
@@ -629,8 +635,12 @@
               promises.push(moveFileToNewDir(destinationDirectory, selected.name, selected.url))
             }
             Promise.all(promises)
-             .then(this.prepareDisrsAndItemsDirs())
+              .then(resp => {
+                console.log('entra1')
+                this.prepareDisrsAndItemsDirs()
+              })
               .catch(err => {
+                console.log('entra2')
                   console.log(err)
                   this.activeSnackbar('error al copiar el archivo'+filesSelecteds[index].name)
               })
