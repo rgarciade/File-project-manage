@@ -2,6 +2,8 @@ import Vue from 'vue';
 import Vuetify from 'vuetify';
 import App from './views/app';
 import openfilesbutton from './vuecomponents/openfilesbutton';
+import buttontoltip from './vuecomponents/buttontoltip';
+
 (async function init() {
 
     await Vue.use(Vuetify, {
@@ -17,6 +19,7 @@ import openfilesbutton from './vuecomponents/openfilesbutton';
         }
     })
     Vue.component('openfilesbutton', openfilesbutton)
+    Vue.component('buttontoltip', buttontoltip)
     new Vue({
         el: '#app',
         render: h => h(App, {

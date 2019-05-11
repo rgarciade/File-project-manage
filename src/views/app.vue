@@ -230,14 +230,7 @@
 
         </div>
         <div class='element-recharge'>
-          <v-tooltip top>
-            <template v-slot:activator="{ on }">
-              <v-btn color="primary" class='button-add' v-on="on"  fab @click="prepareDisrsAndItemsDirs()">
-                <v-icon>replay</v-icon>
-              </v-btn>
-            </template>
-            <span>Recarga</span>
-          </v-tooltip>   
+        <buttontoltip color='primary' itemClass='button-add' :func='prepareDisrsAndItemsDirs()' icon='replay' toltipTest='Recarga' ></buttontoltip>
         </div>
   
       <v-dialog
