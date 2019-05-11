@@ -1,5 +1,6 @@
 <template>
   <v-app>
+    <openfilesbutton principalClass="button-open-copidir"  :files="copiDirsArray"></openfilesbutton>
       <v-dialog
         v-model="repeatIDStatus"
         max-width="290"
@@ -654,6 +655,22 @@
       computed:{
         selections () {
           return this.getSelection(this.tabs)
+        },
+        copiDirsArray(){
+          let dirsReturn = []
+          for (let index = 0; index < this.dirsToSee.length; index++) {
+            const element = this.dirsToSee[index];
+            if(element.copydir){
+              const dirSeparator = ( remote.getGlobal('platform') == "win32" )? '\\' :'/'
+              let name = element.copydir.substring(element.copydir.lastIndexOf(dirSeparator)+1);
+              
+              dirsReturn.push({
+                'urlDir':element.copydir,
+                'name':name
+              })
+            }
+          }
+          return dirsReturn
         }
       },
       watch: {

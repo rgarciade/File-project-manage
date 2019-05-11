@@ -108,3 +108,9 @@
      padding-top: 13px;
      text-align: center;
  }
+ 
+ .button-open-copidir {
+     position: absolute;
+     bottom: 16px;
+     left: 135px;
+ }

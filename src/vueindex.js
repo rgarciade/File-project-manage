@@ -1,7 +1,7 @@
 import Vue from 'vue';
 import Vuetify from 'vuetify';
 import App from './views/app';
-
+import openfilesbutton from './vuecomponents/openfilesbutton';
 (async function init() {
 
     await Vue.use(Vuetify, {
@@ -16,8 +16,8 @@ import App from './views/app';
             success: "#81C784"
         }
     })
-
-    let vueElement = new Vue({
+    Vue.component('openfilesbutton', openfilesbutton)
+    new Vue({
         el: '#app',
         render: h => h(App, {
             props: {}
